@@ -35,7 +35,9 @@ def convert_f_to_c(temp_in_fahrenheit):
     Returns:
         A float representing a temperature in degrees Celcius, rounded to 1 decimal place.
     """
-    pass
+    # result= (round ((temp_in_fahrenheit -32) * 5/9, 1))
+    # return f"{result} Celcius" ###this doesnt work
+
 
 
 def calculate_mean(weather_data):
@@ -46,7 +48,18 @@ def calculate_mean(weather_data):
     Returns:
         A float representing the mean value.
     """
-    pass
+    # return sum(weather_data)/ len(weather_data) ###this doesnt work
+    numeric_values =[]
+    for item in weather_data:
+        try:
+            numeric_values.append(float(item))
+        except ValueError:
+            pass    
+    if not numeric_values:
+        return 0.0
+
+    return sum(numeric_values) / len(numeric_values)    
+
 
 
 def load_data_from_csv(csv_file):
@@ -102,3 +115,6 @@ def generate_daily_summary(weather_data):
         A string containing the summary information.
     """
     pass
+
+
+#######Created a branch folder to test. No change are made 
