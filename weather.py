@@ -35,8 +35,10 @@ def convert_f_to_c(temp_in_fahrenheit):
     Returns:
         A float representing a temperature in degrees Celcius, rounded to 1 decimal place.
     """
-    # result= (round ((temp_in_fahrenheit -32) * 5/9, 1))
-    # return f"{result} Celcius" ###this doesnt work
+    float_temp= float(temp_in_fahrenheit)
+    convert_temp=(float_temp -32) * 5/9
+    result= round(convert_temp, 1)
+    return result
 
 
 
@@ -81,9 +83,16 @@ def find_min(weather_data):
     Returns:
         The minimum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
     """
-    pass
-
-
+    if not weather_data:
+        return ()
+    min_index=0
+    min_value=float(weather_data[0])
+    for index , value in enumerate(weather_data):
+        if float(value)<=min_value:
+            min_index=index
+            min_value=float(value)
+    return (min_value, min_index)          
+   
 def find_max(weather_data):
     """Calculates the maximum value in a list of numbers.
 
@@ -92,7 +101,15 @@ def find_max(weather_data):
     Returns:
         The maximum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
     """
-    pass
+    if not weather_data:
+        return ()
+    max_index=0
+    max_value=float(weather_data[0])
+    for index, value in enumerate(weather_data):
+        if float(value)>=max_value:
+            max_index=index
+            max_value=float(value)
+    return (max_value,max_index)        
 
 
 def generate_summary(weather_data):
