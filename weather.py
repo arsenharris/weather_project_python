@@ -15,7 +15,6 @@ def format_temperature(temp):
     """
     return f"{temp}{DEGREE_SYMBOL}"
 
-
 def convert_date(iso_string):
     """Converts and ISO formatted date into a human-readable format.
 
@@ -24,8 +23,9 @@ def convert_date(iso_string):
     Returns:
         A date formatted like: Weekday Date Month Year e.g. Tuesday 06 July 2021
     """
-    pass
-
+    converted_date=datetime.fromisoformat(iso_string)
+    formatted_date=converted_date.strftime("%A %d %B %Y") 
+    return formatted_date
 
 def convert_f_to_c(temp_in_fahrenheit):
     """Converts a temperature from Fahrenheit to Celcius.
@@ -39,8 +39,6 @@ def convert_f_to_c(temp_in_fahrenheit):
     convert_temp=(float_temp -32) * 5/9
     result= round(convert_temp, 1)
     return result
-
-
 
 def calculate_mean(weather_data):
     """Calculates the mean value from a list of numbers.
@@ -62,8 +60,6 @@ def calculate_mean(weather_data):
 
     return sum(numeric_values) / len(numeric_values)    
 
-
-
 def load_data_from_csv(csv_file):
     """Reads a csv file and stores the data in a list.
 
@@ -72,8 +68,21 @@ def load_data_from_csv(csv_file):
     Returns:
         A list of lists, where each sublist is a (non-empty) line in the csv file.
     """
-    pass
+    data=[]
+    with open(csv_file, "r") as file:
+        reader=csv.reader(file)
+        next(reader)
+        for row in reader:
+            if row!=[]:
+                date=row[0]
+                try:
+                    min_temp=float(row[1])
+                    max_temp=float(row[2])
+                    data.append([date, min_temp,max_temp])
+                except ValueError:
+                    continue
 
+    return data
 
 def find_min(weather_data):
     """Calculates the minimum value in a list of numbers.
@@ -120,7 +129,47 @@ def generate_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-    pass
+    general_summary=[]
+    general_min_temp=[]
+    general_max_temp=[]
+
+    for index, value in enumerate(weather_data):
+        ###collecting data
+        general_min_temp.append(float(value[1]))
+        general_max_temp.append(float(value[2]))
+
+    #### finding min result
+    min_result=find_min(general_min_temp)
+    min_temp_value=min_result[0]
+    min_temp_index=min_result[1]  
+    min_temp_date_str=weather_data[min_temp_index][0] 
+    min_temp_date=convert_date(min_temp_date_str)     
+    #### finding max result
+    max_result=find_max(general_max_temp)
+    max_temp_value=max_result[0]
+    max_temp_index=max_result[1]
+    max_temp_date_str=weather_data[max_temp_index][0] 
+    max_temp_date=convert_date(max_temp_date_str)
+    ### calculate average for min
+    average_min_f=sum(general_min_temp)/ len(general_min_temp)
+    average_min_c=convert_f_to_c(average_min_f)
+    average_min_formatted=format_temperature(average_min_c)
+
+    ### calculate average for max
+    average_max_f=sum(general_max_temp)/ len(general_max_temp)
+    average_max_c=convert_f_to_c(average_max_f)
+    average_max_formatted=format_temperature(average_max_c)
+
+    ##average
+    general_summary.append(f"{len(weather_data)} Day Overview")
+    general_summary.append(f" The lowest temperature will be {format_temperature(convert_f_to_c(min_temp_value))} and it will occur on {min_temp_date}.")
+    general_summary.append(f" The highest temperature will be {format_temperature(convert_f_to_c(max_temp_value))} and it will occur on {max_temp_date}. ")
+    general_summary.append(f" The average low this week is {average_min_formatted}. ")
+    general_summary.append(f" The average high this week is {average_max_formatted}. ")
+
+    return "\n".join(general_summary)        
+
+
 
 
 def generate_daily_summary(weather_data):
@@ -131,7 +180,20 @@ def generate_daily_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-    pass
+    summary=[]
+    for value in weather_data:
+        date_string=convert_date(value[0])
+        min_f=float(value[1])
+        min_to_c=convert_f_to_c(min_f)
+        min_temp=format_temperature(min_to_c)
+        max_f=float(value[2])
+        max_to_c=convert_f_to_c(max_f)                                                                                                                                                                                                                                                                  
+        max_temp=format_temperature(max_to_c)
 
+        summary.append(f"---- {date_string} ----")
+        summary.append(f"  Minimum Temperature: {min_temp}")
+        summary.append(f"  Maximum Temperature: {max_temp}")
+        summary.append("")
+    return "\n".join(summary)
 
 #######Created a branch folder to test. No change are made 
