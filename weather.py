@@ -170,12 +170,14 @@ def generate_daily_summary(weather_data):
         max_f = float(value[2])
         max_temp = format_temperature(convert_f_to_c(max_f))
 
-        daily_summary.append(f"---- {date_string} ----\n")
-        daily_summary.append(f"  Minimum Temperature: {min_temp}\n")
-        daily_summary.append(f"  Maximum Temperature: {max_temp}\n")
-        if i != len(weather_data) - 1:
+        daily_summary.append(f"---- {date_string} ----")
+        daily_summary.append(f"  Minimum Temperature: {min_temp}")
+        daily_summary.append(f"  Maximum Temperature: {max_temp}")
+        if i != len(weather_data) -1:
             daily_summary.append("")
-    return "".join(daily_summary)  # Join the list into a single string       
+    daily_summary.append("")
+    daily_summary.append("")
+    return "\n".join(daily_summary)  # Join the list into a single string       
 
 weather_data = [ 
             ["2021-07-02T07:00:00+08:00", 49, 67],
@@ -184,4 +186,4 @@ weather_data = [
             ["2021-07-05T07:00:00+08:00", 55, 61],
             ["2021-07-06T07:00:00+08:00", 53, 62]
             ]
-print(generate_summary(weather_data))
+print(generate_daily_summary(weather_data))
