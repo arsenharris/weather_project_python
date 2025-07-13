@@ -52,3 +52,7 @@ class GenerateDailySummaryTests(unittest.TestCase):
             expected_result = txt_file.read()
         result = weather.generate_daily_summary(self.example_three)
         self.assertEqual(expected_result, result)
+
+
+
+        

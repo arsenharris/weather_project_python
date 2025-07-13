@@ -23,9 +23,8 @@ def convert_date(iso_string):
     Returns:
         A date formatted like: Weekday Date Month Year e.g. Tuesday 06 July 2021
     """
-    converted_date=datetime.fromisoformat(iso_string)
-    formatted_date=converted_date.strftime("%A %d %B %Y") 
-    return formatted_date
+    converted_date = datetime.fromisoformat(iso_string.replace("Z", "+00:00"))
+    return converted_date.strftime("%A %d %B %Y")  # e.g. "Tuesday 06 July 2021"
 
 def convert_f_to_c(temp_in_fahrenheit):
     """Converts a temperature from Fahrenheit to Celcius.
@@ -35,10 +34,9 @@ def convert_f_to_c(temp_in_fahrenheit):
     Returns:
         A float representing a temperature in degrees Celcius, rounded to 1 decimal place.
     """
-    float_temp= float(temp_in_fahrenheit)
-    convert_temp=(float_temp -32) * 5/9
-    result= round(convert_temp, 1)
-    return result
+    float_temp = float(temp_in_fahrenheit)
+    celsius_temp = (float_temp - 32) * 5 / 9
+    return round(celsius_temp, 1)  # Round to 1 decimal place
 
 def calculate_mean(weather_data):
     """Calculates the mean value from a list of numbers.
@@ -48,17 +46,15 @@ def calculate_mean(weather_data):
     Returns:
         A float representing the mean value.
     """
-    # return sum(weather_data)/ len(weather_data) ###this doesnt work
     numeric_values =[]
     for item in weather_data:
         try:
             numeric_values.append(float(item))
         except ValueError:
-            pass    
+           pass    
     if not numeric_values:
         return 0.0
-
-    return sum(numeric_values) / len(numeric_values)    
+    return sum(numeric_values) / len(numeric_values)
 
 def load_data_from_csv(csv_file):
     """Reads a csv file and stores the data in a list.
@@ -78,12 +74,11 @@ def load_data_from_csv(csv_file):
                 try:
                     min_temp=float(row[1])
                     max_temp=float(row[2])
-                    data.append([date, min_temp,max_temp])
+                    data.append([date, min_temp, max_temp])
                 except ValueError:
                     continue
-
-    return data
-
+    return data                
+        
 def find_min(weather_data):
     """Calculates the minimum value in a list of numbers.
 
@@ -96,11 +91,11 @@ def find_min(weather_data):
         return ()
     min_index=0
     min_value=float(weather_data[0])
-    for index , value in enumerate(weather_data):
+    for index, value in enumerate(weather_data):
         if float(value)<=min_value:
             min_index=index
             min_value=float(value)
-    return (min_value, min_index)          
+    return (min_value,min_index)        
    
 def find_max(weather_data):
     """Calculates the maximum value in a list of numbers.
@@ -111,16 +106,15 @@ def find_max(weather_data):
         The maximum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
     """
     if not weather_data:
-        return ()
+        return()
     max_index=0
     max_value=float(weather_data[0])
     for index, value in enumerate(weather_data):
         if float(value)>=max_value:
             max_index=index
             max_value=float(value)
-    return (max_value,max_index)        
-
-
+    return (max_value,max_index)   
+       
 def generate_summary(weather_data):
     """Outputs a summary for the given weather data.
 
@@ -139,38 +133,26 @@ def generate_summary(weather_data):
         general_max_temp.append(float(value[2]))
 
     #### finding min result
-    min_result=find_min(general_min_temp)
-    min_temp_value=min_result[0]
-    min_temp_index=min_result[1]  
-    min_temp_date_str=weather_data[min_temp_index][0] 
-    min_temp_date=convert_date(min_temp_date_str)     
+    min_temp_value=find_min(general_min_temp)[0]
+    min_temp_index=find_min(general_min_temp)[1]  
+    min_temp_date=convert_date(weather_data[min_temp_index][0] )     
     #### finding max result
-    max_result=find_max(general_max_temp)
-    max_temp_value=max_result[0]
-    max_temp_index=max_result[1]
-    max_temp_date_str=weather_data[max_temp_index][0] 
-    max_temp_date=convert_date(max_temp_date_str)
+    max_temp_value=find_max(general_max_temp)[0]
+    max_temp_index=find_max(general_max_temp)[1]
+    max_temp_date=convert_date(weather_data[max_temp_index][0] )
     ### calculate average for min
-    average_min_f=sum(general_min_temp)/ len(general_min_temp)
-    average_min_c=convert_f_to_c(average_min_f)
-    average_min_formatted=format_temperature(average_min_c)
+    average_min_formatted=format_temperature(convert_f_to_c(sum(general_min_temp)/ len(general_min_temp)))
 
     ### calculate average for max
-    average_max_f=sum(general_max_temp)/ len(general_max_temp)
-    average_max_c=convert_f_to_c(average_max_f)
-    average_max_formatted=format_temperature(average_max_c)
+    average_max_formatted=format_temperature(convert_f_to_c(sum(general_max_temp)/ len(general_max_temp)))
 
     ##average
-    general_summary.append(f"{len(weather_data)} Day Overview")
-    general_summary.append(f" The lowest temperature will be {format_temperature(convert_f_to_c(min_temp_value))} and it will occur on {min_temp_date}.")
-    general_summary.append(f" The highest temperature will be {format_temperature(convert_f_to_c(max_temp_value))} and it will occur on {max_temp_date}. ")
-    general_summary.append(f" The average low this week is {average_min_formatted}. ")
-    general_summary.append(f" The average high this week is {average_max_formatted}. ")
-
-    return "\n".join(general_summary)        
-
-
-
+    general_summary.append(f"{len(weather_data)} Day Overview\n")
+    general_summary.append(f"  The lowest temperature will be {format_temperature(convert_f_to_c(min_temp_value))}, and will occur on {min_temp_date}.\n")
+    general_summary.append(f"  The highest temperature will be {format_temperature(convert_f_to_c(max_temp_value))}, and will occur on {max_temp_date}.\n")
+    general_summary.append(f"  The average low this week is {average_min_formatted}.\n")
+    general_summary.append(f"  The average high this week is {average_max_formatted}.\n")
+    return "".join(general_summary)        
 
 def generate_daily_summary(weather_data):
     """Outputs a daily summary for the given weather data.
@@ -180,20 +162,26 @@ def generate_daily_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-    summary=[]
-    for value in weather_data:
-        date_string=convert_date(value[0])
-        min_f=float(value[1])
-        min_to_c=convert_f_to_c(min_f)
-        min_temp=format_temperature(min_to_c)
-        max_f=float(value[2])
-        max_to_c=convert_f_to_c(max_f)                                                                                                                                                                                                                                                                  
-        max_temp=format_temperature(max_to_c)
+    daily_summary=[]
+    for i, value in enumerate(weather_data):
+        date_string = convert_date(value[0])
+        min_f = float(value[1])
+        min_temp = format_temperature(convert_f_to_c(min_f))
+        max_f = float(value[2])
+        max_temp = format_temperature(convert_f_to_c(max_f))
 
-        summary.append(f"---- {date_string} ----")
-        summary.append(f"  Minimum Temperature: {min_temp}")
-        summary.append(f"  Maximum Temperature: {max_temp}")
-        summary.append("")
-    return "\n".join(summary)
+        daily_summary.append(f"---- {date_string} ----\n")
+        daily_summary.append(f"  Minimum Temperature: {min_temp}\n")
+        daily_summary.append(f"  Maximum Temperature: {max_temp}\n")
+        if i != len(weather_data) - 1:
+            daily_summary.append("")
+    return "".join(daily_summary)  # Join the list into a single string       
 
-#######Created a branch folder to test. No change are made 
+weather_data = [ 
+            ["2021-07-02T07:00:00+08:00", 49, 67],
+            ["2021-07-03T07:00:00+08:00", 57, 68],
+            ["2021-07-04T07:00:00+08:00", 56, 62],
+            ["2021-07-05T07:00:00+08:00", 55, 61],
+            ["2021-07-06T07:00:00+08:00", 53, 62]
+            ]
+print(generate_summary(weather_data))
